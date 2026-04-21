@@ -1,0 +1,26 @@
+[
+    {
+        "identifiant": "admin",
+        "mot_de_passe": "$2y$12$rlDOkZYwti7DvcpF\/M2snuKSCYfn7JkvSvC3r1xFKsthr9j5\/lqq.",
+        "role": "superadmin",
+        "nom_complet": "Administrateur",
+        "date_creation": "2026-04-17",
+        "actif": true
+    },
+    {
+        "identifiant": "manager1",
+        "mot_de_passe": "$2y$12$rlDOkZYwti7DvcpF\/M2snuKSCYfn7JkvSvC3r1xFKsthr9j5\/lqq.",
+        "role": "manager",
+        "nom_complet": "Gestionnaire",
+        "date_creation": "2026-04-17",
+        "actif": true
+    },
+    {
+        "identifiant": "secretaire",
+        "mot_de_passe": "$2y$10$geybCPdxJm8YCDqDXfpcQuWpeTNWiIG8X1J68FWVH3du9Y9YWO57u",
+        "role": "caissier",
+        "nom_complet": "Secretaire1",
+        "date_creation": "2026-04-21",
+        "actif": true
+    }
+]

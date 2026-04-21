@@ -1,0 +1,26 @@
+/* ------------------------------
+   MODULE RAPPORTS
+--------------------------------*/
+
+.page-rapports h2 {
+    color: #D4A017;
+}
+
+.page-rapports .card {
+    border-left: 5px solid #D4A017;
+}
+
+.page-rapports button {
+    background: #D4A017;
+}
+
+.page-rapports button:hover {
+    background: #A67C12;
+}
+
+.rapport-box {
+    background: #FFF8E1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}

@@ -1,0 +1,26 @@
+/* ------------------------------
+   MODULE PRODUITS
+--------------------------------*/
+
+.page-produits h2 {
+    color: #0077CC;
+}
+
+.page-produits .card {
+    border-left: 5px solid #0077CC;
+}
+
+.page-produits button {
+    background: #0077CC;
+}
+
+.page-produits button:hover {
+    background: #005A99;
+}
+
+.produit-info {
+    background: #E8F4FF;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
