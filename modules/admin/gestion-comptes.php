@@ -1,4 +1,6 @@
 <?php
+require_once '../../auth/session.php';
+$title = 'Gestion-Comptes';
 include '../../includes/header.php';
 require_once '../../includes/fonctions-auth.php';
 
@@ -30,7 +32,6 @@ $utilisateurs = charger_utilisateurs();
 
     <?php foreach ($utilisateurs as $u): ?>
         <div class="user-card">
-
             <p><strong>Identifiant :</strong> <?= htmlspecialchars($u['identifiant']) ?></p>
             <p><strong>Nom complet :</strong> <?= htmlspecialchars($u['nom_complet']) ?></p>
             <p class="role"><strong>Rôle :</strong> <?= ucfirst($u['role']) ?></p>
@@ -42,7 +43,6 @@ $utilisateurs = charger_utilisateurs();
                     <button style="background:#E74C3C;">Supprimer</button>
                 </a>
             <?php endif; ?>
-
         </div>
     <?php endforeach; ?>
 

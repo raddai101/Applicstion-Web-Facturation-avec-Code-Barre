@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../auth/session.php';
+$title = 'Genrer facture';
 include '../../includes/header.php';
 require_once '../../includes/fonctions-factures.php';
 
@@ -38,8 +40,8 @@ if (!$facture) {
     <?php foreach ($facture['articles'] as $a): ?>
         <tr>
             <td><?= $a['nom'] ?></td>
-            <td><?= $a['prix_unitaire_ht'] ?></td>
-            <td><?= $a['quantite'] ?></td>
+            <td><?= $a['prix_unitaire_ht']?></td>
+            <td><?= $a['quantite']?></td>
             <td><?= $a['sous_total_ht'] ?></td>
         </tr>
     <?php endforeach; ?>

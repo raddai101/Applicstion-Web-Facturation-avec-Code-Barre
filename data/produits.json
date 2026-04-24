@@ -1,1 +1,58 @@
-[]
+[
+    {
+        "code_barre": "3017620422003",
+        "nom": "Vain amour 1L",
+        "prix_unitaire_ht": 1200,
+        "quantite_stock": 40,
+        "date_expiration": "2026-12-31",
+        "date_enregistrement": "2026-04-17"
+    },
+    {
+        "code_barre": "1234567890123",
+        "nom": "Pain complet 500g",
+        "prix_unitaire_ht": 800,
+        "quantite_stock": 16,
+        "date_expiration": "2026-04-25",
+        "date_enregistrement": "2026-04-17"
+    },
+    {
+        "code_barre": "9876543210987",
+        "nom": "Lait frais 1L",
+        "prix_unitaire_ht": 1500,
+        "quantite_stock": 30,
+        "date_expiration": "2026-04-30",
+        "date_enregistrement": "2026-04-17"
+    },
+    {
+        "code_barre": "5556667778889",
+        "nom": "Riz 2kg",
+        "prix_unitaire_ht": 3500,
+        "quantite_stock": 15,
+        "date_expiration": "2027-12-31",
+        "date_enregistrement": "2026-04-17"
+    },
+    {
+        "code_barre": "6181100741452",
+        "nom": "SLAM",
+        "prix_unitaire_ht": 13000,
+        "quantite_stock": 99,
+        "date_expiration": "2027-10-22",
+        "date_enregistrement": "2026-04-23"
+    },
+    {
+        "code_barre": "11117720",
+        "nom": "SLAM",
+        "prix_unitaire_ht": 3000,
+        "quantite_stock": 20,
+        "date_expiration": "2027-10-22",
+        "date_enregistrement": "2026-04-23"
+    },
+    {
+        "code_barre": "33445566777778",
+        "nom": "<script>alert(\"salut\")<\/script>",
+        "prix_unitaire_ht": 888,
+        "quantite_stock": 1,
+        "date_expiration": "2027-10-22",
+        "date_enregistrement": "2026-04-23"
+    }
+]

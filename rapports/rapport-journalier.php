@@ -1,4 +1,6 @@
 <?php
+require_once  '../auth/session.php';
+$title = 'rapport-journalier';
 include '../includes/header.php';
 require_once '../includes/fonctions-factures.php';
 

@@ -1,208 +1,312 @@
 /**
- * Scanner de codes-barres
- * Utilise QuaggaJS pour détecter les codes-barres via la caméra
+ * SCANNER.js — Système de scan avec Quagga + 3 boutons (Capturer, Manuel, Redémarrer)
  */
 
-let isScanning = false;
-let quaggaInitialized = false;
+var SCANNER = (function () {
 
-document.addEventListener('DOMContentLoaded', function() {
-    const preview = document.getElementById('preview');
+    var quaggaCharge = false;
+    var liveActif = false;
+    var detectionFaite = false;
 
-    if (!preview) return;
-
-    // Charger QuaggaJS dynamiquement
-    loadQuaggaJS().then(() => {
-        // Démarrer le scanner après le chargement de QuaggaJS
-        startScanning();
-    }).catch(err => {
-        console.error('Erreur lors du chargement de QuaggaJS:', err);
-        alert('Erreur lors du chargement du scanner. Veuillez rafraîchir la page.');
-    });
-});
-
-function loadQuaggaJS() {
-    return new Promise((resolve, reject) => {
-        // Vérifier si QuaggaJS est déjà chargé
-        if (typeof Quagga !== 'undefined') {
-            resolve();
-            return;
-        }
-
-        // Charger QuaggaJS depuis CDN
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
-
-function startScanning() {
-    const preview = document.getElementById('preview');
-
-    if (!preview) return;
-
-    // Configuration QuaggaJS
-    const config = {
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: preview,
-            constraints: {
-                width: 640,
-                height: 480,
-                facingMode: "environment" // Caméra arrière sur mobile
+    // ─────────────────────────────────────────────────────────
+    // 1. STYLES
+    // ─────────────────────────────────────────────────────────
+    function injecterStyles() {
+        if (document.getElementById('scanner-css')) return;
+        var s = document.createElement('style');
+        s.id = 'scanner-css';
+        s.textContent = `
+            #preview {
+                display: block;
+                width: 100%;
+                border-radius: 8px;
+                background: #000;
+                border: 3px solid #3498DB;
+                object-fit: cover;
             }
-        },
-        locator: {
-            patchSize: "medium",
-            halfSample: true
-        },
-        numOfWorkers: 2,
-        decoder: {
-            readers: [
-                "code_128_reader",
-                "ean_reader",
-                "ean_8_reader",
-                "code_39_reader",
-                "code_39_vin_reader",
-                "codabar_reader",
-                "upc_reader",
-                "upc_e_reader",
-                "i2of5_reader"
-            ]
-        },
-        locate: true
-    };
-
-    // Initialiser QuaggaJS
-    Quagga.init(config, function(err) {
-        if (err) {
-            console.error('Erreur d\'initialisation QuaggaJS:', err);
-            alert('Impossible d\'initialiser le scanner. Vérifiez les permissions de la caméra.');
-            return;
-        }
-
-        console.log('QuaggaJS initialisé avec succès');
-        quaggaInitialized = true;
-
-        // Démarrer le scanner
-        Quagga.start();
-
-        // Écouter les détections de codes-barres
-        Quagga.onDetected(function(result) {
-            const code = result.codeResult.code;
-            console.log('Code-barres détecté:', code);
-
-            // Traiter le code-barres détecté
-            processBarcode(code);
-
-            // Arrêter temporairement le scanner pour éviter les détections multiples
-            stopScanning();
-            setTimeout(() => {
-                startScanning();
-            }, 2000); // Redémarrer après 2 secondes
-        });
-
-        // Écouter les erreurs
-        Quagga.onProcessed(function(result) {
-            if (result) {
-                // Afficher les informations de debug si nécessaire
-                const drawingCtx = Quagga.canvas.ctx.overlay;
-                const drawingCanvas = Quagga.canvas.dom.overlay;
-
-                if (result.boxes) {
-                    drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
-                    result.boxes.filter(function (box) {
-                        return box !== result.box;
-                    }).forEach(function (box) {
-                        Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
-                    });
-                }
-
-                if (result.box) {
-                    Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00F", lineWidth: 2});
-                }
-
-                if (result.codeResult && result.codeResult.code) {
-                    Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
-                }
+            #scanner-wrapper {
+                position: relative;
+                max-width: 500px;
+                margin: 0 auto;
             }
-        });
-    });
-}
-
-function processBarcode(code) {
-    // Créer un formulaire caché pour envoyer le code au serveur
-    const form = document.createElement('form');
-    form.method = 'GET';
-    form.action = window.location.href;
-
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'code';
-    input.value = code;
-
-    form.appendChild(input);
-    document.body.appendChild(form);
-
-    // Afficher un feedback visuel
-    showScanFeedback('Code détecté: ' + code);
-
-    // Soumettre le formulaire après un court délai
-    setTimeout(() => {
-        form.submit();
-    }, 500);
-}
-
-function showScanFeedback(message) {
-    // Créer un élément de feedback
-    let feedback = document.getElementById('scan-feedback');
-    if (!feedback) {
-        feedback = document.createElement('div');
-        feedback.id = 'scan-feedback';
-        feedback.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            font-weight: bold;
+            #scanner-viseur {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 240px;
+                height: 120px;
+                border: 2px solid rgba(52, 152, 219, 0.9);
+                border-radius: 6px;
+                pointer-events: none;
+                box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+                z-index: 10;
+            }
+            #scanner-viseur::before,
+            #scanner-viseur::after {
+                content: "";
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                border-color: #3498DB;
+                border-style: solid;
+            }
+            #scanner-viseur::before {
+                top: -2px;
+                left: -2px;
+                border-width: 3px 0 0 3px;
+            }
+            #scanner-viseur::after {
+                bottom: -2px;
+                right: -2px;
+                border-width: 0 3px 3px 0;
+            }
+            #scanner-ligne {
+                position: absolute;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(to right, transparent, #E74C3C, transparent);
+                animation: scanLigne 1.8s ease-in-out infinite;
+                top: 0;
+            }
+            @keyframes scanLigne {
+                0% { top: 0%; opacity: 1; }
+                50% { top: 100%; opacity: 1; }
+                100% { top: 0%; opacity: 1; }
+            }
+            #scanner-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 15px;
+                justify-content: center;
+            }
+            .btn-scan {
+                padding: 10px 16px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 14px;
+                transition: opacity 0.2s;
+            }
+            .btn-scan:hover { opacity: 0.85; }
+            .btn-photo { background: #2ECC71; color: white; }
+            .btn-manual { background: #3498DB; color: white; }
+            .btn-restart { background: #95A5A6; color: white; }
+            #scanner-status {
+                margin: 15px auto;
+                padding: 12px 15px;
+                border-radius: 6px;
+                font-weight: 600;
+                text-align: center;
+                font-size: 14px;
+                max-width: 500px;
+                background: #E8F5E9;
+                color: #1B5E20;
+                border: 2px solid #27AE60;
+            }
         `;
-        document.body.appendChild(feedback);
+        document.head.appendChild(s);
     }
 
-    feedback.textContent = message;
-    feedback.style.display = 'block';
-
-    // Masquer après 3 secondes
-    setTimeout(() => {
-        feedback.style.display = 'none';
-    }, 3000);
-}
-
-function stopScanning() {
-    if (quaggaInitialized && isScanning) {
-        Quagga.stop();
-        isScanning = false;
-        console.log('Scanner arrêté');
+    // ─────────────────────────────────────────────────────────
+    // 2. CHARGEMENT QUAGGA
+    // ─────────────────────────────────────────────────────────
+    function chargerQuagga() {
+        return new Promise(function (resolve, reject) {
+            if (typeof Quagga !== 'undefined') { resolve(); return; }
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js';
+            script.async = true;
+            var timeout = setTimeout(function () {
+                reject(new Error('Timeout chargement Quagga'));
+            }, 15000);
+            script.onload = function () {
+                clearTimeout(timeout);
+                quaggaCharge = true;
+                resolve();
+            };
+            script.onerror = function () {
+                clearTimeout(timeout);
+                reject(new Error('Erreur chargement Quagga'));
+            };
+            document.head.appendChild(script);
+        });
     }
-}
 
-// Arrêter le scanner quand la page se ferme
-window.addEventListener('beforeunload', function() {
-    stopScanning();
+    // ─────────────────────────────────────────────────────────
+    // 3. STATUT
+    // ─────────────────────────────────────────────────────────
+    function afficherStatut(msg) {
+        var el = document.getElementById('scanner-status');
+        if (el) el.textContent = msg;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // 4. DÉMARRER LE SCANNER EN MODE CONTINU
+    // ─────────────────────────────────────────────────────────
+    function demarrerLive() {
+        if (liveActif) return;
+        var preview = document.getElementById('preview');
+        if (!preview) {
+            afficherStatut('❌ Élément vidéo introuvable');
+            return;
+        }
+
+        afficherStatut('⏳ Initialisation caméra...');
+        console.log('[scanner] Démarrage Quagga');
+
+        Quagga.init({
+            inputStream: {
+                name: 'Live',
+                type: 'LiveStream',
+                target: preview,
+                constraints: {
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            },
+            locator: { patchSize: 'medium', halfSample: true },
+            decoder: { 
+                readers: ['ean_reader', 'ean_8_reader', 'code_128_reader', 'code_39_reader', 'upc_reader'] 
+            },
+            frequency: 5,
+            multiple: false
+        }, function (err) {
+            if (err) {
+                console.error('[scanner] Erreur init:', err);
+                afficherStatut('❌ Erreur: ' + (err.message || err));
+                return;
+            }
+
+            console.log('[scanner] Quagga initialisé');
+            liveActif = true;
+
+            try {
+                Quagga.start();
+                console.log('[scanner] Quagga démarré');
+                afficherStatut('📹 Scan en cours - Placez le code-barres devant la caméra');
+
+                Quagga.onDetected(function (result) {
+                    if (result && result.codeResult && result.codeResult.code && !detectionFaite) {
+                        var code = result.codeResult.code;
+                        detectionFaite = true;
+                        console.log('[scanner] Code détecté:', code);
+                        afficherStatut('✅ Code trouvé: ' + code);
+                        Quagga.stop();
+                        setTimeout(function () {
+                            window.location.href = window.location.pathname + '?code=' + encodeURIComponent(code);
+                        }, 800);
+                    }
+                });
+            } catch (e) {
+                console.error('[scanner] Erreur start:', e);
+                afficherStatut('❌ Erreur démarrage');
+                liveActif = false;
+            }
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // 5. CONSTRUCTION UI
+    // ─────────────────────────────────────────────────────────
+    function construireUI() {
+        var preview = document.getElementById('preview');
+        if (!preview) return;
+
+        // Wrapper
+        var wrapper = document.createElement('div');
+        wrapper.id = 'scanner-wrapper';
+        preview.parentNode.insertBefore(wrapper, preview);
+        wrapper.appendChild(preview);
+
+        // Viseur + ligne
+        var viseur = document.createElement('div');
+        viseur.id = 'scanner-viseur';
+        var ligne = document.createElement('div');
+        ligne.id = 'scanner-ligne';
+        viseur.appendChild(ligne);
+        wrapper.appendChild(viseur);
+
+        // Boutons
+        var controls = document.createElement('div');
+        controls.id = 'scanner-controls';
+
+        var btnCapture = document.createElement('button');
+        btnCapture.className = 'btn-scan btn-photo';
+        btnCapture.textContent = '📸 Capturer';
+        btnCapture.onclick = function () {
+            afficherStatut('📸 Capture en cours...');
+        };
+        controls.appendChild(btnCapture);
+
+        var btnManuel = document.createElement('button');
+        btnManuel.className = 'btn-scan btn-manual';
+        btnManuel.textContent = '⌨️ Saisie manuelle';
+        btnManuel.onclick = function () {
+            var code = prompt('Entrez le code-barres:');
+            if (code && code.trim()) {
+                window.location.href = window.location.pathname + '?code=' + encodeURIComponent(code.trim());
+            }
+        };
+        controls.appendChild(btnManuel);
+
+        var btnRestart = document.createElement('button');
+        btnRestart.className = 'btn-scan btn-restart';
+        btnRestart.textContent = '🔄 Redémarrer';
+        btnRestart.onclick = function () {
+            detectionFaite = false;
+            location.reload();
+        };
+        controls.appendChild(btnRestart);
+
+        wrapper.parentNode.insertBefore(controls, wrapper.nextSibling);
+
+        // Statut
+        var status = document.createElement('div');
+        status.id = 'scanner-status';
+        status.textContent = '⏳ Chargement...';
+        controls.parentNode.insertBefore(status, controls.nextSibling);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // 6. INITIALISATION
+    // ─────────────────────────────────────────────────────────
+    function init() {
+        var preview = document.getElementById('preview');
+        if (!preview) {
+            console.error('[scanner] #preview introuvable');
+            return;
+        }
+
+        injecterStyles();
+        construireUI();
+        afficherStatut('⏳ Chargement Quagga...');
+
+        chargerQuagga()
+            .then(function () {
+                console.log('[scanner] Quagga chargé ✓');
+                demarrerLive();
+            })
+            .catch(function (err) {
+                console.error('[scanner] Erreur:', err.message);
+                afficherStatut('❌ ' + err.message + ' - Utilisez la saisie manuelle');
+            });
+    }
+
+    window.addEventListener('beforeunload', function () {
+        if (typeof Quagga !== 'undefined' && liveActif) {
+            try { Quagga.stop(); } catch (e) {}
+        }
+    });
+
+    return { init: init };
+})();
+
+document.addEventListener('DOMContentLoaded', function () {
+    SCANNER.init();
 });
 
-// Fonction pour saisie manuelle (alternative)
-function manualScanInput() {
-    const code = prompt('Entrez le code-barres manuellement:');
-    if (code && code.trim()) {
-        processBarcode(code.trim());
-    }
-}

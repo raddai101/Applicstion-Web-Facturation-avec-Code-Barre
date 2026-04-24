@@ -1,4 +1,6 @@
 <?php
+require_once  '../../auth/session.php';
+$title = 'liste-produits';
 include '../../includes/header.php';
 require_once '../../includes/fonctions-produits.php';
 

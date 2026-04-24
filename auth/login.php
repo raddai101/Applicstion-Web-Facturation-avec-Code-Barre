@@ -1,5 +1,6 @@
 <?php
 session_start();
+$title = 'login';
 require_once '../config/config.php';
 require_once '../includes/fonctions-auth.php';
 
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user) {
         $_SESSION['user'] = $user;
-        header("Location: /facturation/index.php");
+        header("Location: ".BASE_URL."/index.php");
         exit;
     } else {
         $erreur = "Identifiant ou mot de passe incorrect.";
@@ -26,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <link rel="stylesheet" href="/facturation/assets/css/style.css">
     <link rel="stylesheet" href="/facturation/assets/css/login.css">
+    <title><?= $title ?></title>
 </head>
 <body>
 

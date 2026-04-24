@@ -65,7 +65,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Scanner -->
 <div class="card">
     <h3>Scanner un code-barres</h3>
+    <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+        Scannez le code-barres du nouveau produit ou utilisez la saisie manuelle.
+    </p>
     <video id="preview" style="width:100%; border-radius:8px;"></video>
+    <div style="margin-top: 10px;">
+        <button type="button" onclick="manualScanInput()" style="background: #3498DB; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+            Saisie manuelle
+        </button>
+    </div>
 </div>
 
 <script src="/facturation/assets/js/scanner.js"></script>

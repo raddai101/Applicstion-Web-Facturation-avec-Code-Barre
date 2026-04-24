@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../auth/session.php';
+$title = 'Gestion-Comptes';
 include '../../includes/header.php';
 require_once '../../includes/fonctions-auth.php';
 
@@ -41,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "mot_de_passe" => password_hash($mot_de_passe, PASSWORD_DEFAULT),
             "role" => $role,
             "nom_complet" => $nom_complet,
-            "date_creation" => date("Y-m-d"),
+            "date_creation" => date(DATE_FORMAT),
             "actif" => true
         ];
 
@@ -83,9 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <label>Rôle</label>
         <select name="role">
-            <option value="caissier">Caissier</option>
-            <option value="manager">Manager</option>
-            <option value="superadmin">Super Administrateur</option>
+            <?php foreach($ROLES_AUTORISES as $rl) :?>
+                <?="<option value=caissier>$rl</option>"; ?>
+            <?php endforeach; ?>
         </select>
 
         <button type="submit">Créer le compte</button>

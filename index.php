@@ -1,4 +1,5 @@
-<?php include 'includes/header.php'; ?>
+<?php require_once  'auth/session.php'; $title='accueil'; include 'includes/header.php'; ?>
+<?php require_once 'config/config.php';?>
 <link rel="stylesheet" href="/facturation/assets/css/index.css">
 
 <div class="page-index">
@@ -12,7 +13,7 @@
     <div class="dashboard">
 
         <!-- Bloc Facturation (visible pour tous) -->
-        <a href="/facturation/modules/facturation/nouvelle-facture.php" class="dash-item facturation">
+        <a href=<?php echo BASE_URL."/modules".BASE_URL."/nouvelle-facture.php"?> class="dash-item facturation">
             <h3>Nouvelle Facture</h3>
             <p>Scanner des articles et générer une facture.</p>
         </a>

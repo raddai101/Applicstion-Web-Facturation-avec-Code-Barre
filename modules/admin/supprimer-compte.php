@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../auth/session.php';
+$title = 'Supprimer compte';
 include '../../includes/header.php';
 require_once '../../includes/fonctions-auth.php';
 

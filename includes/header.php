@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../auth/session.php';
+// require_once __DIR__ . '/../auth/session.php';
 
 // Détection de la page active
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Système de Facturation</title>
+    <title><?= $title ?></title>
 
     <!-- CSS global -->
     <link rel="stylesheet" href="/facturation/assets/css/style.css">
@@ -54,6 +54,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                Comptes
             </a>
         <?php endif; ?>
+
+        <!-- <a href="/facturation/test-scanner.php" style="background: #E74C3C; color: white;">Test Scanner</a> -->
 
         <a href="/facturation/auth/logout.php">Déconnexion</a>
     </nav>
