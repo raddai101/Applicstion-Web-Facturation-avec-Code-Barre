@@ -1,56 +1,62 @@
 <?php
-/**
- * ---------------------------------------------------------
- *  FICHIER DE CONFIGURATION GLOBALE DU PROJET
- *  Système de Facturation PHP - JSON Only
- * ---------------------------------------------------------
- */
+// ============================================================
+// config/config.php — Paramètres globaux du système
+// ============================================================
 
-// Empêcher l'accès direct
-if (!defined('SECURE_ACCESS')) {
-    define('SECURE_ACCESS', true);
-}
-
-// Racine du projet
 define('BASE_PATH', dirname(__DIR__));
-
-// URL de base du projet (pour les redirections)
 define('BASE_URL', '/facturation');
 
-// Chemins vers les fichiers JSON
-define('FILE_PRODUITS', BASE_PATH . '/data/produits.json');
-define('FILE_FACTURES', BASE_PATH . '/data/factures.json');
-define('FILE_UTILISATEURS', BASE_PATH . '/data/utilisateurs.json');
+// Chemins des fichiers de données
+define('DATA_PATH',        BASE_PATH . '/data');
+define('PRODUITS_FILE',    DATA_PATH . '/produits.json');
+define('FACTURES_FILE',    DATA_PATH . '/factures.json');
+define('USERS_FILE',       DATA_PATH . '/utilisateurs.json');
 
-// Taux de TVA (18% selon le TP)
-define('TAUX_TVA', 0.18);
+// Paramètres fiscaux
+define('TVA_TAUX', 0.16);          // 16%
+define('DEVISE',   'CDF');
 
-// Format de date par défaut
-define('DATE_FORMAT', 'Y-m-d');
+// Session
+define('SESSION_TIMEOUT', 3600);   // 1 heure
 
-// Fuseau horaire
+// Timezone
 date_default_timezone_set('Africa/Kinshasa');
 
-// Configuration du scanner (si besoin)
-define('SCANNER_ACTIVE', true);
-
-// Rôles autorisés
-$ROLES_AUTORISES = [
-    'caissier',
-    'manager',
-    'superadmin'
-];
-
-// Fonction utilitaire pour charger un fichier JSON
-function charger_json($chemin) {
-    if (!file_exists($chemin)) {
-        return [];
-    }
-    return json_decode(file_get_contents($chemin), true);
+// Démarrage de session sécurisé
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Fonction utilitaire pour sauvegarder un fichier JSON
-function sauvegarder_json($chemin, $data) {
-    file_put_contents($chemin, json_encode($data, JSON_PRETTY_PRINT));
+// Auto-création fichiers data si absents
+foreach ([PRODUITS_FILE, FACTURES_FILE] as $f) {
+    if (!file_exists($f)) file_put_contents($f, '[]');
 }
-
+if (!file_exists(USERS_FILE)) {
+    $default = [
+        [
+            'identifiant'   => 'admin',
+            'mot_de_passe'  => password_hash('test', PASSWORD_DEFAULT),
+            'role'          => 'superadmin',
+            'nom_complet'   => 'Administrateur Principal',
+            'date_creation' => date('Y-m-d'),
+            'actif'         => true
+        ],
+        [
+            'identifiant'   => 'manager',
+            'mot_de_passe'  => password_hash('test', PASSWORD_DEFAULT),
+            'role'          => 'manager',
+            'nom_complet'   => 'Manager Principal',
+            'date_creation' => date('Y-m-d'),
+            'actif'         => true
+        ],
+        [
+            'identifiant'   => 'caissier',
+            'mot_de_passe'  => password_hash('test', PASSWORD_DEFAULT),
+            'role'          => 'caissier',
+            'nom_complet'   => 'Caissier Principal',
+            'date_creation' => date('Y-m-d'),
+            'actif'         => true
+        ]
+    ];
+    file_put_contents(USERS_FILE, json_encode($default, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+}

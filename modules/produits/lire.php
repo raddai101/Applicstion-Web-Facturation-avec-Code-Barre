@@ -1,31 +1,23 @@
 <?php
-include '../../includes/header.php';
-require_once '../../includes/fonctions-produits.php';
+// ============================================================
+// modules/produits/lire.php — API AJAX lecture produit
+// ============================================================
+require_once dirname(__DIR__, 2) . '/config/config.php';
+require_once dirname(__DIR__, 2) . '/includes/fonctions-auth.php';
+require_once dirname(__DIR__, 2) . '/includes/fonctions-produits.php';
+require_once dirname(__DIR__, 2) . '/auth/session.php';
 
-$produit = null;
+header('Content-Type: application/json; charset=utf-8');
 
-if (isset($_GET['code'])) {
-    $produit = trouver_produit($_GET['code']);
+$code = trim($_GET['code'] ?? '');
+if (!$code) {
+    echo json_encode(['found' => false, 'error' => 'Code-barres manquant']);
+    exit;
 }
-?>
 
-<div class="page-produits">
-
-<div class="card">
-    <h2>Informations Produit</h2>
-</div>
-
-<?php if (!$produit): ?>
-    <div class="error">Produit introuvable.</div>
-<?php else: ?>
-    <div class="card produit-info">
-        <p><strong>Nom :</strong> <?= $produit['nom'] ?></p>
-        <p><strong>Prix :</strong> <?= $produit['prix_unitaire_ht'] ?> CDF</p>
-        <p><strong>Stock :</strong> <?= $produit['quantite_stock'] ?></p>
-        <p><strong>Expiration :</strong> <?= $produit['date_expiration'] ?></p>
-    </div>
-<?php endif; ?>
-
-</div>
-
-<?php include '../../includes/footer.php'; ?>
+$produit = chercher_produit_par_code($code);
+if ($produit) {
+    echo json_encode(['found' => true, 'produit' => $produit]);
+} else {
+    echo json_encode(['found' => false, 'code' => $code]);
+}

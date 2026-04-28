@@ -1,65 +1,63 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
+// ============================================================
+// includes/fonctions-factures.php — Fonctions facturation
+// ============================================================
 
-function charger_factures() {
-    return charger_json(FILE_FACTURES);
+function charger_factures(): array {
+    $data = file_get_contents(FACTURES_FILE);
+    return json_decode($data, true) ?? [];
 }
 
-function sauvegarder_factures($factures) {
-    sauvegarder_json(FILE_FACTURES, $factures);
+function sauvegarder_factures(array $factures): void {
+    file_put_contents(FACTURES_FILE, json_encode(array_values($factures), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-function generer_id_facture() {
-    $date = date("Ymd");
-    $factures = charger_factures();
-    $count = count($factures) + 1;
-    return "FAC-$date-" . str_pad($count, 3, "0", STR_PAD_LEFT);
-}
-
-function calculer_totaux($articles) {
+function calculer_totaux(array $articles): array {
     $total_ht = 0;
-
     foreach ($articles as $a) {
         $total_ht += $a['sous_total_ht'];
     }
-
-    $tva = $total_ht * TAUX_TVA;
+    $tva       = round($total_ht * TVA_TAUX, 2);
     $total_ttc = $total_ht + $tva;
-
-    return [
-        "total_ht" => $total_ht,
-        "tva" => $tva,
-        "total_ttc" => $total_ttc
-    ];
+    return ['total_ht' => $total_ht, 'tva' => $tva, 'total_ttc' => $total_ttc];
 }
 
-/* ------------------------------
-   FONCTIONS POUR LES RAPPORTS
---------------------------------*/
+function creer_facture(array $articles, string $caissier): array {
+    $factures    = charger_factures();
+    $date        = date('Y-m-d');
+    $heure       = date('H:i:s');
+    $id          = 'FAC-' . date('Ymd') . '-' . str_pad(count($factures) + 1, 3, '0', STR_PAD_LEFT);
+    $totaux      = calculer_totaux($articles);
 
-function filtrer_factures_par_date($date) {
-    $factures = charger_factures();
-    $resultat = [];
+    $facture = array_merge([
+        'id_facture' => $id,
+        'date'       => $date,
+        'heure'      => $heure,
+        'caissier'   => $caissier,
+        'articles'   => $articles,
+    ], $totaux);
 
-    foreach ($factures as $f) {
-        if ($f['date'] === $date) {
-            $resultat[] = $f;
-        }
+    // Décrémenter stock
+    foreach ($articles as $a) {
+        decrementer_stock($a['code_barre'], $a['quantite']);
     }
 
-    return $resultat;
+    $factures[] = $facture;
+    sauvegarder_factures($factures);
+    return $facture;
 }
 
-function filtrer_factures_par_mois($annee, $mois) {
+function factures_du_jour(): array {
+    $today    = date('Y-m-d');
     $factures = charger_factures();
-    $resultat = [];
+    return array_filter($factures, fn($f) => $f['date'] === $today);
+}
 
-    foreach ($factures as $f) {
-        list($y, $m, $d) = explode("-", $f['date']);
-        if ($y == $annee && $m == $mois) {
-            $resultat[] = $f;
-        }
-    }
+function factures_du_mois(string $annee_mois): array {
+    $factures = charger_factures();
+    return array_filter($factures, fn($f) => str_starts_with($f['date'], $annee_mois));
+}
 
-    return $resultat;
+function formater_montant(float $montant): string {
+    return number_format($montant, 0, ',', '.') . ' ' . DEVISE;
 }

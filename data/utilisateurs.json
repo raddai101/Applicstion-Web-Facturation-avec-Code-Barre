@@ -1,26 +1,26 @@
 [
     {
         "identifiant": "admin",
-        "mot_de_passe": "$2y$12$rlDOkZYwti7DvcpF\/M2snuKSCYfn7JkvSvC3r1xFKsthr9j5\/lqq.",
+        "mot_de_passe": "$2y$12$YFinj\/qQszrLsJpfxdMYlO7yr6tvNYofFg1n83ZnkxLKU7ToeI3Gu",
         "role": "superadmin",
-        "nom_complet": "Administrateur",
+        "nom_complet": "Administrateur Principal",
         "date_creation": "2026-04-17",
         "actif": true
     },
     {
-        "identifiant": "manager1",
-        "mot_de_passe": "$2y$12$rlDOkZYwti7DvcpF\/M2snuKSCYfn7JkvSvC3r1xFKsthr9j5\/lqq.",
+        "identifiant": "manager",
+        "mot_de_passe": "$2y$12$YFinj\/qQszrLsJpfxdMYlO7yr6tvNYofFg1n83ZnkxLKU7ToeI3Gu",
         "role": "manager",
-        "nom_complet": "Gestionnaire",
+        "nom_complet": "Manager Principal",
         "date_creation": "2026-04-17",
         "actif": true
     },
     {
-        "identifiant": "secretaire",
-        "mot_de_passe": "$2y$10$geybCPdxJm8YCDqDXfpcQuWpeTNWiIG8X1J68FWVH3du9Y9YWO57u",
+        "identifiant": "caissier",
+        "mot_de_passe": "$2y$12$YFinj\/qQszrLsJpfxdMYlO7yr6tvNYofFg1n83ZnkxLKU7ToeI3Gu",
         "role": "caissier",
-        "nom_complet": "Secretaire1",
-        "date_creation": "2026-04-21",
+        "nom_complet": "Caissier Principal",
+        "date_creation": "2026-04-17",
         "actif": true
     }
 ]

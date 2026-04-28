@@ -1,58 +1,90 @@
 [
     {
         "code_barre": "3017620422003",
-        "nom": "Vain amour 1L",
+        "nom": "Huile de palme 1L",
         "prix_unitaire_ht": 1200,
-        "quantite_stock": 40,
         "date_expiration": "2026-12-31",
+        "quantite_stock": 50,
         "date_enregistrement": "2026-04-17"
     },
     {
-        "code_barre": "1234567890123",
-        "nom": "Pain complet 500g",
-        "prix_unitaire_ht": 800,
-        "quantite_stock": 16,
-        "date_expiration": "2026-04-25",
-        "date_enregistrement": "2026-04-17"
-    },
-    {
-        "code_barre": "9876543210987",
-        "nom": "Lait frais 1L",
-        "prix_unitaire_ht": 1500,
+        "code_barre": "3229820129488",
+        "nom": "Savon de Marseille",
+        "prix_unitaire_ht": 450,
+        "date_expiration": "2027-01-15",
         "quantite_stock": 30,
-        "date_expiration": "2026-04-30",
         "date_enregistrement": "2026-04-17"
     },
     {
-        "code_barre": "5556667778889",
-        "nom": "Riz 2kg",
-        "prix_unitaire_ht": 3500,
-        "quantite_stock": 15,
-        "date_expiration": "2027-12-31",
-        "date_enregistrement": "2026-04-17"
-    },
-    {
-        "code_barre": "6181100741452",
-        "nom": "SLAM",
-        "prix_unitaire_ht": 13000,
-        "quantite_stock": 99,
-        "date_expiration": "2027-10-22",
-        "date_enregistrement": "2026-04-23"
-    },
-    {
-        "code_barre": "11117720",
-        "nom": "SLAM",
-        "prix_unitaire_ht": 3000,
+        "code_barre": "7891234567890",
+        "nom": "Farine de ble 1kg",
+        "prix_unitaire_ht": 800,
+        "date_expiration": "2026-08-20",
         "quantite_stock": 20,
-        "date_expiration": "2027-10-22",
-        "date_enregistrement": "2026-04-23"
+        "date_enregistrement": "2026-04-17"
     },
     {
-        "code_barre": "33445566777778",
-        "nom": "<script>alert(\"salut\")<\/script>",
-        "prix_unitaire_ht": 888,
-        "quantite_stock": 1,
-        "date_expiration": "2027-10-22",
-        "date_enregistrement": "2026-04-23"
+        "code_barre": "4006381333931",
+        "nom": "Sel iode 500g",
+        "prix_unitaire_ht": 250,
+        "date_expiration": "2028-01-01",
+        "quantite_stock": 100,
+        "date_enregistrement": "2026-04-17"
+    },
+    {
+        "code_barre": "5000112637922",
+        "nom": "Sucre cristallise 1kg",
+        "prix_unitaire_ht": 600,
+        "date_expiration": "2027-06-30",
+        "quantite_stock": 45,
+        "date_enregistrement": "2026-04-17"
+    },
+    {
+        "code_barre": "644474633526337383876226",
+        "nom": "huile",
+        "prix_unitaire_ht": 6466,
+        "date_expiration": "2026-04-09",
+        "quantite_stock": 4,
+        "date_enregistrement": "2026-04-26"
+    },
+    {
+        "code_barre": "3333333333333333333333",
+        "nom": "produit",
+        "prix_unitaire_ht": 3875857,
+        "date_expiration": "2026-04-27",
+        "quantite_stock": 0,
+        "date_enregistrement": "2026-04-27"
+    },
+    {
+        "code_barre": "5410832568237",
+        "nom": "Mayonaise Mayo",
+        "prix_unitaire_ht": 8000,
+        "date_expiration": "2026-04-28",
+        "quantite_stock": 10,
+        "date_enregistrement": "2026-04-28"
+    },
+    {
+        "code_barre": "42305682",
+        "nom": "Mayonaise",
+        "prix_unitaire_ht": 5000,
+        "date_expiration": "2026-04-28",
+        "quantite_stock": 20,
+        "date_enregistrement": "2026-04-28"
+    },
+    {
+        "code_barre": "8991389780725",
+        "nom": "Cahier Beltexco 48 feuilles",
+        "prix_unitaire_ht": 1000,
+        "date_expiration": "2026-04-28",
+        "quantite_stock": 10,
+        "date_enregistrement": "2026-04-28"
+    },
+    {
+        "code_barre": "676656543357888787",
+        "nom": "egeegeg",
+        "prix_unitaire_ht": 474747,
+        "date_expiration": "2026-04-29",
+        "quantite_stock": 646,
+        "date_enregistrement": "2026-04-28"
     }
 ]

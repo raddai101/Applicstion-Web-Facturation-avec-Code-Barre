@@ -1,26 +1,87 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
+// ============================================================
+// includes/fonctions-produits.php — Fonctions produits
+// ============================================================
 
-function charger_produits() {
-    return charger_json(FILE_PRODUITS);
+function charger_produits(): array {
+    $data = file_get_contents(PRODUITS_FILE);
+    return json_decode($data, true) ?? [];
 }
 
-function sauvegarder_produits($produits) {
-    sauvegarder_json(FILE_PRODUITS, $produits);
+function sauvegarder_produits(array $produits): void {
+    file_put_contents(PRODUITS_FILE, json_encode(array_values($produits), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-function trouver_produit($code_barre) {
-    $produits = charger_produits();
-    foreach ($produits as $p) {
-        if ($p['code_barre'] === $code_barre) {
-            return $p;
-        }
+function chercher_produit_par_code(string $code): ?array {
+    foreach (charger_produits() as $p) {
+        if ($p['code_barre'] === $code) return $p;
     }
     return null;
 }
 
-function ajouter_produit($produit) {
+function enregistrer_produit(array $data): array {
     $produits = charger_produits();
-    $produits[] = $produit;
+    $code     = trim($data['code_barre']);
+
+    // Vérifie doublon
+    foreach ($produits as &$p) {
+        if ($p['code_barre'] === $code) {
+            // Mise à jour
+            $p['nom']               = trim($data['nom']);
+            $p['prix_unitaire_ht']  = (float)$data['prix_unitaire_ht'];
+            $p['date_expiration']   = $data['date_expiration'];
+            $p['quantite_stock']    = (int)$data['quantite_stock'];
+            sauvegarder_produits($produits);
+            return ['success' => true, 'message' => 'Produit mis à jour.', 'produit' => $p];
+        }
+    }
+
+    // Nouveau produit
+    $nouveau = [
+        'code_barre'          => $code,
+        'nom'                 => trim($data['nom']),
+        'prix_unitaire_ht'    => (float)$data['prix_unitaire_ht'],
+        'date_expiration'     => $data['date_expiration'],
+        'quantite_stock'      => (int)$data['quantite_stock'],
+        'date_enregistrement' => date('Y-m-d'),
+    ];
+    $produits[] = $nouveau;
     sauvegarder_produits($produits);
+    return ['success' => true, 'message' => 'Produit enregistré.', 'produit' => $nouveau];
+}
+
+function decrementer_stock(string $code, int $quantite): bool {
+    $produits = charger_produits();
+    foreach ($produits as &$p) {
+        if ($p['code_barre'] === $code) {
+            if ($p['quantite_stock'] < $quantite) return false;
+            $p['quantite_stock'] -= $quantite;
+            sauvegarder_produits($produits);
+            return true;
+        }
+    }
+    return false;
+}
+
+function valider_produit_form(array $data): array {
+    $errors = [];
+    if (empty($data['code_barre']))                         $errors[] = 'Code-barres requis.';
+    if (empty($data['nom']))                                $errors[] = 'Nom du produit requis.';
+    if (!isset($data['prix_unitaire_ht']) || !is_numeric($data['prix_unitaire_ht']) || $data['prix_unitaire_ht'] <= 0)
+                                                            $errors[] = 'Prix invalide (doit être > 0).';
+    if (!isset($data['quantite_stock']) || !is_numeric($data['quantite_stock']) || $data['quantite_stock'] < 0)
+                                                            $errors[] = 'Quantité invalide.';
+    if (empty($data['date_expiration']) || !strtotime($data['date_expiration']))
+                                                            $errors[] = 'Date d\'expiration invalide.';
+    
+    // ✓ Vérifier que la date d'expiration n'est pas dans le passé
+    if (!empty($data['date_expiration']) && strtotime($data['date_expiration'])) {
+        $dateExpiration = strtotime($data['date_expiration']);
+        $dateAujourd = strtotime(date('Y-m-d'));
+        if ($dateExpiration < $dateAujourd) {
+            $errors[] = 'La date d\'expiration ne peut pas être antérieure à aujourd\'hui.';
+        }
+    }
+    
+    return $errors;
 }

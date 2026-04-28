@@ -1,52 +1,28 @@
 <?php
-require_once __DIR__ . '/../auth/session.php';
-$title = 'Supprimer compte';
-include '../../includes/header.php';
-require_once '../../includes/fonctions-auth.php';
+// ============================================================
+// modules/admin/supprimer-compte.php
+// ============================================================
+require_once dirname(__DIR__, 2) . '/config/config.php';
+require_once dirname(__DIR__, 2) . '/includes/fonctions-auth.php';
+require_once dirname(__DIR__, 2) . '/auth/session.php';
+verifier_role(['superadmin']);
 
-// Vérification du rôle : seuls les Super Admin peuvent supprimer
-if ($_SESSION['user']['role'] !== 'superadmin') {
-    echo "<div class='error'>Accès refusé : vous n'avez pas les permissions nécessaires.</div>";
-    include '../../includes/footer.php';
+$id    = trim($_GET['id'] ?? '');
+$users = charger_utilisateurs();
+
+// Sécurité : ne pas supprimer son propre compte
+if ($id === $_SESSION['user']['identifiant']) {
+    $_SESSION['flash_error'] = 'Vous ne pouvez pas supprimer votre propre compte.';
+    header('Location: ' . BASE_URL . '/modules/admin/gestion-comptes.php');
     exit;
 }
 
-// Vérification de l'identifiant transmis
-if (!isset($_GET['id'])) {
-    echo "<div class='error'>Identifiant manquant.</div>";
-    include '../../includes/footer.php';
-    exit;
+$new_users = array_filter($users, fn($u) => $u['identifiant'] !== $id);
+if (count($new_users) === count($users)) {
+    $_SESSION['flash_error'] = "Compte introuvable : $id";
+} else {
+    sauvegarder_utilisateurs(array_values($new_users));
+    $_SESSION['flash_ok'] = "Compte '$id' supprimé.";
 }
-
-$id = $_GET['id'];
-
-// Protection : impossible de supprimer le Super Admin
-if ($id === 'superadmin') {
-    echo "<div class='error'>Impossible de supprimer le Super Administrateur.</div>";
-    include '../../includes/footer.php';
-    exit;
-}
-
-// Charger la liste des utilisateurs
-$utilisateurs = charger_utilisateurs();
-$nouvelle_liste = [];
-
-// Filtrer la liste en excluant l'utilisateur à supprimer
-foreach ($utilisateurs as $u) {
-    if ($u['identifiant'] !== $id) {
-        $nouvelle_liste[] = $u;
-    }
-}
-
-// Sauvegarder la nouvelle liste
-sauvegarder_utilisateurs($nouvelle_liste);
-
-// Message de confirmation
-echo "<div class='card' style='border-left:5px solid #1E9E63;'>
-        <p>Compte supprimé avec succès.</p>
-      </div>";
-
-echo "<a href='gestion-comptes.php'><button>Retour</button></a>";
-
-include '../../includes/footer.php';
-?>
+header('Location: ' . BASE_URL . '/modules/admin/gestion-comptes.php');
+exit;
