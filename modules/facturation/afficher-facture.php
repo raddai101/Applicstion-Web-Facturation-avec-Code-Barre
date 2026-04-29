@@ -27,7 +27,7 @@ require_once dirname(__DIR__, 2) . '/includes/header.php';
 <div class="full-page">
   <div class="page-header no-print">
     <div>
-      <div class="page-title">🧾 Facture <?= htmlspecialchars($facture['id_facture']) ?></div>
+      <div class="page-title">🧾 Facture : <?= htmlspecialchars($facture['id_facture']) ?></div>
       <div class="page-sub"><?= $facture['date'] ?> à <?= $facture['heure'] ?></div>
     </div>
     <div style="display:flex;gap:8px">

@@ -60,7 +60,7 @@
         "nom": "Mayonaise Mayo",
         "prix_unitaire_ht": 8000,
         "date_expiration": "2026-04-28",
-        "quantite_stock": 10,
+        "quantite_stock": 0,
         "date_enregistrement": "2026-04-28"
     },
     {
@@ -76,7 +76,7 @@
         "nom": "Cahier Beltexco 48 feuilles",
         "prix_unitaire_ht": 1000,
         "date_expiration": "2026-04-28",
-        "quantite_stock": 10,
+        "quantite_stock": 7,
         "date_enregistrement": "2026-04-28"
     },
     {
@@ -86,5 +86,21 @@
         "date_expiration": "2026-04-29",
         "quantite_stock": 646,
         "date_enregistrement": "2026-04-28"
+    },
+    {
+        "code_barre": "38756",
+        "nom": "SLAM23",
+        "prix_unitaire_ht": 4500,
+        "date_expiration": "2026-04-30",
+        "quantite_stock": 12,
+        "date_enregistrement": "2026-04-29"
+    },
+    {
+        "code_barre": "8906099390140",
+        "nom": "Cahier Cartonner Beltexco",
+        "prix_unitaire_ht": 5000,
+        "date_expiration": "2026-05-10",
+        "quantite_stock": 10,
+        "date_enregistrement": "2026-04-29"
     }
 ]

@@ -1,1 +1,74 @@
-[]
+[
+    {
+        "id_facture": "FAC-20260429-001",
+        "date": "2026-04-29",
+        "heure": "02:57:19",
+        "caissier": "admin",
+        "articles": [
+            {
+                "code_barre": "8991389780725",
+                "nom": "Cahier Beltexco 48 feuilles",
+                "prix_unitaire_ht": 1000,
+                "quantite": 3,
+                "sous_total_ht": 3000
+            }
+        ],
+        "total_ht": 3000,
+        "tva": 480,
+        "total_ttc": 3480
+    },
+    {
+        "id_facture": "FAC-20260429-002",
+        "date": "2026-04-29",
+        "heure": "03:00:39",
+        "caissier": "admin",
+        "articles": [
+            {
+                "code_barre": "5410832568237",
+                "nom": "Mayonaise Mayo",
+                "prix_unitaire_ht": 8000,
+                "quantite": 10,
+                "sous_total_ht": 80000
+            }
+        ],
+        "total_ht": 80000,
+        "tva": 12800,
+        "total_ttc": 92800
+    },
+    {
+        "id_facture": "FAC-20260429-003",
+        "date": "2026-04-29",
+        "heure": "03:28:36",
+        "caissier": "admin",
+        "articles": [
+            {
+                "code_barre": "8906099390140",
+                "nom": "Cahier Cartonner Beltexco",
+                "prix_unitaire_ht": 5000,
+                "quantite": 5,
+                "sous_total_ht": 25000
+            }
+        ],
+        "total_ht": 25000,
+        "tva": 4000,
+        "total_ttc": 29000
+    },
+    {
+        "id_facture": "FAC-20260429-004",
+        "date": "2026-04-29",
+        "heure": "03:42:37",
+        "caissier": "caissier",
+        "articles": [
+            {
+                "code_barre": "8906099390140",
+                "nom": "Cahier Cartonner Beltexco",
+                "prix_unitaire_ht": 5000,
+                "quantite": 5,
+                "sous_total_ht": 25000
+            }
+        ],
+        "total_ht": 25000,
+        "tva": 4000,
+        "total_ttc": 29000
+    }
+]

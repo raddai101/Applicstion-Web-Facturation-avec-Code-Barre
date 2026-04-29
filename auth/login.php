@@ -50,14 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-logo">
       <div class="logo-icon-lg">SM</div>
       <h1 class="login-title">SuperMarché POS</h1>
-      <p class="login-sub">Système de Caisse — Connexion sécurisée</p>
+      <!-- <p class="login-sub">Système de Caisse — Connexion sécurisée</p> -->
     </div>
 
     <?php if ($timeout): ?>
       <div class="alert alert-amber">⏱ Session expirée. Veuillez vous reconnecter.</div>
     <?php endif; ?>
     <?php if ($logout): ?>
-      <div class="alert alert-green">✓ Déconnexion réussie.</div>
+      <!-- <div class="alert alert-green">✓ Déconnexion réussie.</div> -->
     <?php endif; ?>
     <?php if ($error): ?>
       <div class="alert alert-red">✕ <?= htmlspecialchars($error) ?></div>
@@ -76,12 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit" class="btn-login">Se connecter </button>
     </form>
 
-    <div class="login-hint">
+    <!-- <div class="login-hint">
       <div class="hint-title">Comptes de démonstration</div>
       <div class="hint-row"><span class="hint-badge superadmin">admin</span><span>admin</span><span class="hint-pass">/ test</span></div>
       <div class="hint-row"><span class="hint-badge manager">manager</span><span>manager</span><span class="hint-pass">/ test</span></div>
       <div class="hint-row"><span class="hint-badge caissier">caissier</span><span>caissier</span><span class="hint-pass">/ test</span></div>
-    </div>
+    </div> -->
 
   </div>
 </div>

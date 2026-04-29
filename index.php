@@ -86,7 +86,7 @@ require_once __DIR__ . '/includes/header.php';
           </div>
           <!-- Contrôles -->
           <div class="scanner-right">
-            <button class="btn btn-primary btn-w100" id="btn-start">▶ Démarrer le scanner</button>
+            <button type = "submit" class="btn btn-primary btn-w100" id="btn-start">▶ Démarrer le scanner</button>
             <button class="btn btn-danger  btn-w100" id="btn-stop"  style="display:none">⏹ Arrêter</button>
             <div class="manual-row" id="man-row" style="display:none">
               <input type="text" id="man-in" placeholder="Saisir code-barres..." maxlength="25">
