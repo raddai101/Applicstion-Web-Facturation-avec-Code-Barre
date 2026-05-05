@@ -19,6 +19,15 @@ function chercher_produit_par_code(string $code): ?array {
     return null;
 }
 
+function produit_perime(array $produit): bool {
+    if (empty($produit['date_expiration'])) {
+        return false;
+    }
+    $expiration = strtotime($produit['date_expiration']);
+    $aujourdHui  = strtotime(date('Y-m-d'));
+    return $expiration < $aujourdHui;
+}
+
 function enregistrer_produit(array $data): array {
     $produits = charger_produits();
     $code     = trim($data['code_barre']);

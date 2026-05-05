@@ -100,7 +100,15 @@
         "nom": "Cahier Cartonner Beltexco",
         "prix_unitaire_ht": 5000,
         "date_expiration": "2026-05-10",
-        "quantite_stock": 10,
+        "quantite_stock": 9,
         "date_enregistrement": "2026-04-29"
+    },
+    {
+        "code_barre": "6009804011278",
+        "nom": "PEPSI SANS SUCRE",
+        "prix_unitaire_ht": 1500,
+        "date_expiration": "2026-05-30",
+        "quantite_stock": 12,
+        "date_enregistrement": "2026-05-05"
     }
 ]

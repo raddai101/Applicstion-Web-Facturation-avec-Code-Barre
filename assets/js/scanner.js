@@ -176,6 +176,12 @@
                 codeReader = new ZXing.BrowserMultiFormatReader();
                 console.log("✓ BrowserMultiFormatReader créé");
 
+                if (scanBadge) { scanBadge.textContent = 'ACTIF'; scanBadge.className = 'badge badge-green'; }
+                if (btnStart) btnStart.style.display = 'none';
+                if (btnStop) btnStop.style.display = 'flex';
+                if (slineEl) slineEl.classList.add('on');
+                if (vlabelEl) vlabelEl.textContent = 'Recherche en cours...';
+
                 // Afficher le flux vidéo
                 console.log("Initialisation décodage vidéo...");
                 const decodePromise = codeReader.decodeFromVideoDevice(
@@ -205,6 +211,11 @@
                                 console.warn("⚠️ Erreur lors du reset:", e.message);
                             }
                             codeReader = null;
+                            if (scanBadge) { scanBadge.textContent = 'INACTIF'; scanBadge.className = 'badge badge-blue'; }
+                            if (btnStart) btnStart.style.display = 'flex';
+                            if (btnStop) btnStop.style.display = 'none';
+                            if (slineEl) slineEl.classList.remove('on');
+                            if (vlabelEl) vlabelEl.textContent = 'Caméra inactive';
 
                             if (typeof onDetected === 'function') {
                                 console.log("→ Appel callback avec code:", code);
@@ -359,5 +370,103 @@
             console.warn('switchCam: non implémenté dans le fallback scanner. Changez manuellement la caméra dans les paramètres du navigateur.');
         };
     }
+
+    window.initManualModeListeners = function() {
+        const tabs      = document.querySelectorAll('.mode-tab');
+        const manRow    = document.getElementById('man-row');
+        const btnStart  = document.getElementById('btn-start');
+        const btnStop   = document.getElementById('btn-stop');
+        const manInput  = document.getElementById('man-in');
+        const btnManual = document.getElementById('btn-manual-ok');
+        const scanBadge = document.getElementById('scan-badge');
+        const vlabel    = document.getElementById('vlabel');
+        const resultEl  = document.getElementById('rbox');
+
+        function setMode(mode) {
+            tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.mode === mode));
+            if (mode === 'man') {
+                if (manRow) manRow.style.display = 'flex';
+                if (scanBadge) { scanBadge.textContent = 'MANUEL'; scanBadge.className = 'badge badge-amber'; }
+                if (vlabel) vlabel.textContent = 'Mode manuel activé';
+                if (btnStop) btnStop.style.display = 'none';
+                if (btnStart) btnStart.style.display = 'flex';
+                if (window.stopScanner) window.stopScanner();
+                if (resultEl) { resultEl.textContent = 'Saisissez un code-barres manuellement'; resultEl.style.color = ''; }
+                if (manInput) manInput.focus();
+            } else {
+                if (manRow) manRow.style.display = 'none';
+                if (scanBadge) { scanBadge.textContent = 'INACTIF'; scanBadge.className = 'badge badge-blue'; }
+                if (vlabel) vlabel.textContent = 'Caméra inactive';
+                if (btnStop) btnStop.style.display = 'none';
+                if (btnStart) btnStart.style.display = 'flex';
+                if (resultEl) { resultEl.textContent = 'En attente de scan...'; resultEl.style.color = ''; }
+            }
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(event) {
+                event.preventDefault();
+                setMode(this.dataset.mode);
+            });
+        });
+
+        if (btnStart) {
+            btnStart.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (manRow && manRow.style.display === 'flex') {
+                    if (manInput) manInput.focus();
+                    return;
+                }
+                if (window.startScan) {
+                    window.startScan();
+                }
+                if (btnStart) btnStart.style.display = 'none';
+                if (btnStop) btnStop.style.display = 'flex';
+                if (scanBadge) { scanBadge.textContent = 'ACTIF'; scanBadge.className = 'badge badge-green'; }
+                if (vlabel) vlabel.textContent = 'Recherche en cours...';
+            });
+        }
+
+        if (btnStop) {
+            btnStop.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (window.stopScanner) window.stopScanner();
+            });
+        }
+
+        if (btnManual) {
+            btnManual.addEventListener('click', function(event) {
+                event.preventDefault();
+                const code = manInput ? manInput.value.trim() : '';
+                if (!code) {
+                    if (resultEl) {
+                        resultEl.textContent = 'Entrez un code-barres valide.';
+                        resultEl.style.color = 'var(--red)';
+                    }
+                    return;
+                }
+                if (typeof window.__scanner_onDetected === 'function') {
+                    window.__scanner_onDetected(code);
+                } else if (typeof window.onBarcodeDetected === 'function') {
+                    window.onBarcodeDetected(code);
+                } else if (typeof window.onDetect === 'function') {
+                    window.onDetect(code);
+                }
+                if (resultEl) {
+                    resultEl.textContent = '✓ Code manuel utilisé : ' + code;
+                    resultEl.style.color = 'var(--green)';
+                }
+            });
+        }
+
+        if (manInput) {
+            manInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    if (btnManual) btnManual.click();
+                }
+            });
+        }
+    };
 
 })();

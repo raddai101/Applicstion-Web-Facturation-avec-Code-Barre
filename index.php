@@ -33,13 +33,48 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'scan') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valider_facture'])) {
     $articles_json = $_POST['articles_json'] ?? '[]';
     $articles      = json_decode($articles_json, true);
-    if (!empty($articles)) {
+    $errors        = [];
+
+    if (!is_array($articles) || empty($articles)) {
+        $errors[] = 'Impossible de valider : aucun article dans la facture.';
+    } else {
+        foreach ($articles as $article) {
+            if (!isset($article['code_barre'], $article['quantite'])) {
+                $errors[] = 'Article invalide dans la facture.';
+                continue;
+            }
+
+            $prod = chercher_produit_par_code($article['code_barre']);
+            if (!$prod) {
+                $errors[] = 'Produit introuvable : ' . htmlspecialchars($article['code_barre']);
+                continue;
+            }
+
+            if (produit_perime($prod)) {
+                $errors[] = 'Impossible de vendre le produit périmé : ' . htmlspecialchars($prod['nom']) . '.';
+                continue;
+            }
+
+            $quantite = (int)$article['quantite'];
+            if ($quantite <= 0) {
+                $errors[] = 'Quantité invalide pour ' . htmlspecialchars($prod['nom']) . '.';
+                continue;
+            }
+
+            if ($prod['quantite_stock'] < $quantite) {
+                $errors[] = 'Stock insuffisant pour ' . htmlspecialchars($prod['nom']) . '.';
+            }
+        }
+    }
+
+    if (empty($errors)) {
         $facture = creer_facture($articles, $user['identifiant']);
         $_SESSION['flash_ok'] = 'Facture ' . $facture['id_facture'] . ' validée avec succès !';
         header('Location: ' . BASE_URL . '/modules/facturation/afficher-facture.php?id=' . urlencode($facture['id_facture']));
         exit;
     }
-    $flash_err = 'Impossible de valider : aucun article dans la facture.';
+
+    $flash_err = implode(' ', $errors);
 }
 
 require_once __DIR__ . '/includes/header.php';
@@ -279,8 +314,22 @@ var invNum      = <?= count(charger_factures()) + 1 ?>;
 /* ── Init scanner ── */
 document.addEventListener('DOMContentLoaded', function() {
   scannerInit(onBarcodeDetected);
+  if (typeof window.initManualModeListeners === 'function') {
+    window.initManualModeListeners();
+  }
   updateReceiptId();
 });
+
+/* ── Vérifie si la date d'expiration est passée ── */
+function isProductExpired(dateString) {
+  if (!dateString) return false;
+  const exp = new Date(dateString);
+  if (isNaN(exp.getTime())) return false;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  exp.setHours(0,0,0,0);
+  return exp < today;
+}
 
 /* ── Callback détection code-barres ── */
 function onBarcodeDetected(code) {
@@ -316,16 +365,25 @@ function fillProductForm(p) {
 
   var badge = document.getElementById('pf-badge');
   badge.style.display = 'inline';
-  badge.className     = 'badge badge-green';
-  badge.textContent   = 'Stock: ' + p.quantite_stock;
 
-  document.getElementById('btn-add').disabled      = false;
-  document.getElementById('btn-add').style.display = 'flex';
+  if (isProductExpired(p.date_expiration)) {
+    badge.className   = 'badge badge-red';
+    badge.textContent = 'PÉRIMÉ';
+    document.getElementById('btn-add').disabled      = true;
+    document.getElementById('btn-add').style.display = 'flex';
+    document.getElementById('salert').classList.add('on');
+    document.getElementById('salert-msg').textContent = 'Produit périmé : vente refusée.';
+    showToast('Produit périmé — vente refusée', 'te');
+  } else {
+    badge.className   = 'badge badge-green';
+    badge.textContent = 'Stock: ' + p.quantite_stock;
+    document.getElementById('btn-add').disabled      = false;
+    document.getElementById('btn-add').style.display = 'flex';
+    document.getElementById('salert').classList.remove('on');
+  }
 
   var btnReg = document.getElementById('btn-register');
   if (btnReg) btnReg.style.display = 'none';
-
-  showToast('✓ ' + p.nom, 'ts');
 }
 
 /* ── Produit inconnu ── */

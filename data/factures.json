@@ -70,5 +70,41 @@
         "total_ht": 25000,
         "tva": 4000,
         "total_ttc": 29000
+    },
+    {
+        "id_facture": "FAC-20260505-005",
+        "date": "2026-05-05",
+        "heure": "00:50:04",
+        "caissier": "admin",
+        "articles": [
+            {
+                "code_barre": "8906099390140",
+                "nom": "Cahier Cartonner Beltexco",
+                "prix_unitaire_ht": 5000,
+                "quantite": 1,
+                "sous_total_ht": 5000
+            }
+        ],
+        "total_ht": 5000,
+        "tva": 800,
+        "total_ttc": 5800
+    },
+    {
+        "id_facture": "FAC-20260505-006",
+        "date": "2026-05-05",
+        "heure": "01:00:21",
+        "caissier": "admin",
+        "articles": [
+            {
+                "code_barre": "6009804011278",
+                "nom": "PEPSI SANS SUCRE",
+                "prix_unitaire_ht": 1500,
+                "quantite": 3,
+                "sous_total_ht": 4500
+            }
+        ],
+        "total_ht": 4500,
+        "tva": 720,
+        "total_ttc": 5220
     }
 ]
